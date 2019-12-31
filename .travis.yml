@@ -22,16 +22,15 @@ before_install:
   - docker-compose --version
   - docker ps
 
-before_script:
-  - IMAGE="x0rzkov/investigo:${VERSION/\//-}"
-
-env:
-  - VERSION=latest/alpine
-
 language: bash
 
 script:
-  - sudo make docker-all
+  - export VCS_REF=$(git describe HEAD --always)
+  - export BUILD_DATE=$(TZ=UTC date +%Y-%m-%dT%H:%M:%SZ)
+  - sudo docker build --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF} -t "x0rkov/investigo:${VCS_REF}" -f Dockerfile .
+  - sudo docker tag x0rkov/investigo:${VCS_REF} x0rkov/investigo:latest
+  - sudo docker build --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF} -t "x0rkov/investigo-chromium:${VCS_REF}" -f Dockerfile.chromium .
+  - sudo docker tag x0rkov/investigo-chromium:${VCS_REF} x0rkov/investigo-chromium:latest
   - docker-compose up -d
   - docker images
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
