@@ -33,7 +33,7 @@ script:
   - sudo docker tag x0rkov/investigo-chromium:${VCS_REF} x0rkov/investigo-chromium:latest
   - docker-compose up -d
   - docker images
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$DOCKER_PASSWORD" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push x0rzkov/investigo:latest
   - docker push x0rzkov/investigo-chromium:latest
 
